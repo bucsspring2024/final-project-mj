@@ -1,18 +1,19 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=13804652&assignment_repo_type=AssignmentRepo)
 :warning: Everything between << >> needs to be replaced (remove << >> after replacing)
 
-# << Project Title >>
-## CS110 Final Project  << Semester, Year >>
+# Placeholder Title
+## CS110 Final Project  << Spring, 2024 >>
 
 ## Team Members
 
-<< List team member names >>
+Matt-Joshua Tan
+?
 
 ***
 
 ## Project Description
 
-<< Give an overview of your project >>
+To be determined.
 
 ***    
 
@@ -20,16 +21,19 @@
 
 ### Initial Design
 
+idk
 ![initial gui](assets/gui.jpg)
 
 ### Final Design
 
+idk
 ![final gui](assets/finalgui.jpg)
 
 ## Program Design
 
 ### Features
 
+To be determined.
 1. << Feature 1 >>
 2. << Feature 2 >>
 3. << Feature 3 >>
