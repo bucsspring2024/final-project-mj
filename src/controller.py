@@ -5,10 +5,12 @@ class Controller:
     
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption('My Cool Final Project!11!!!1')
+        
         self.width = 960
         self.height = 540
         self.surface = pygame.display.set_mode((self.width, self.height))
-        
+    
         pygame.display.flip()
         
         self.state = 'START'
