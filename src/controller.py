@@ -1,5 +1,6 @@
 import pygame
 import pygame_menu
+from src.player import Player
 
 class Controller:
     
@@ -44,10 +45,7 @@ class Controller:
         
     
     def gameloop(self):
-        self.surface.fill("green")
-        pygame.display.flip()
-        pygame.time.wait(2000)
-        exit()
+        pass
 
 
 
