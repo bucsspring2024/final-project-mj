@@ -33,14 +33,11 @@ class Controller:
         self.menu = pygame_menu.Menu('Menu', self.width, self.height)
         self.menu.add.label('Click to start.', max_char=-1, font_size=32)
         self.menu.draw(self.surface)
-        running = True
 
-        while running:
-            self.menu.update(pygame.event.get())
+        while self.state == "START":
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.state = "GAME"
-            print(self.state)
             pygame.display.flip()
         
 
