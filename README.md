@@ -1,18 +1,17 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=13804652&assignment_repo_type=AssignmentRepo)
 
-# Placeholder Title
+# Vision Board Maker
 ## CS110 Final Project Spring, 2024
 
 ## Team Members
 
 Matt-Joshua Tan
-?
 
 ***
 
 ## Project Description
 
-To be determined.
+Create your own vision board in Pygame!
 
 ***    
 
@@ -21,7 +20,7 @@ To be determined.
 ### Initial Design
 
 idk
-![initial gui](assets/gui.jpg)
+![initial gui](assets/guidraft.pdf)
 
 ### Final Design
 
@@ -32,21 +31,27 @@ idk
 
 ### Features
 
-To be determined.
-1. << Feature 1 >>
-2. << Feature 2 >>
-3. << Feature 3 >>
-4. << Feature 4 >>
-5. << Feature 5 >>
+1. Add text with customizable color, size, and font
+2. Add images from various sources
+3. Change the background color
+4. (?) Create random vision boards!
+5. Save your vision board!
 
 ### Classes
 
-- << You should have a list of each of your classes with a description >>
+Expected classes:
+1. Text class (as sprite)
+2. Image class (as sprite)
+3. GUI class? (idk) (use pygame gui module)
+4. utility class (constants like window size, max text/images)
 
 ## ATP
 
 | Step                 |Procedure             |Expected Results                   |
 |----------------------|:--------------------:|----------------------------------:|
-|  1                   | Run Counter Program  |GUI window appears with count = 0  |
-|  2                   | click count button   | display changes to count = 1      |
+|  1                   | Run program  |Start menu appears |
+|  2                   | Click 'Add Text' | 'Add Text' window opens in middle      |
+| 3 | Customize your text | 'Choose Location' prompt shows up |
+| 4 | Click desired text location | Customized text appears in location |
+| 5 | I'll figure it out later | ... | 
 etc...
