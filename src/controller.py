@@ -19,11 +19,14 @@ class Controller:
 
         
     def mainloop(self):
+        
         while True:
             if self.state == 'START':
                 self.startloop()
+                
             elif self.state == 'GAME':
                 self.gameloop()
+                
             elif self.state == 'END':
                 self.endloop()            
     
@@ -37,7 +40,7 @@ class Controller:
         
         while self.state == "START":
           for event in pygame.event.get():
-              if event.type == pygame.MOUSEBUTTONDOWN:
+              if event.type == pygame.MOUSEBUTTONDOWN:  
                   self.state = "GAME"
                   
         self.menu.update(pygame.event.get())
