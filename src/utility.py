@@ -6,4 +6,4 @@ class Utility:
         self.width = 720
         self.max_text = 10
         self.max_images = 10
-        pass
+        self.framerate = 60
