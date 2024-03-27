@@ -5,6 +5,12 @@ from src.utility import Utility
 from src.text import Text
 from src.image import Image
 
+# libraries I might need
+    # request to get images
+    # PIL to process images
+    # tkinter is standard so no extra credit but might need for save
+    
+
 # is this how constants work LOL ???
 consts = Utility()
 LENGTH = consts.length
