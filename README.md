@@ -20,11 +20,11 @@ Create your own vision board in Pygame!
 ### Initial Design
 
 idk
-![initial gui](assets/guidraft.pdf)
+![initial gui](assets/gui.jpg)
 
 ### Final Design
 
-idk
+TBD
 ![final gui](assets/finalgui.jpg)
 
 ## Program Design
