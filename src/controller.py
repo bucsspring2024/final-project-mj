@@ -7,9 +7,10 @@ from src.image import Image
 
 # libraries I might need
     # request to get images
+        # retry if it fails
     # PIL to process images
     # tkinter is standard so no extra credit but might need for save
-    
+
 
 # is this how constants work LOL ???
 consts = Utility()

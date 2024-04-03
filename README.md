@@ -33,8 +33,8 @@ TBD
 1. Add text with customizable color, size, and font
 2. Add images from various sources
 3. Change the background color
-4. (?) Create random vision boards!
-5. Save your vision board!
+4. Remove text and images if you change your mind
+5. Save your vision board as an image!
 
 ### Classes
 
