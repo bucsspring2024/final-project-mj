@@ -1,15 +1,13 @@
 import pygame
-import pygame_gui
 
-class Image:
+class Image(pygame.sprite.Sprite):
     def __init__(self, image_path, position):
+        """
+        Initialize the image object
+        Args:
+            image_path str: path to img file
+            position tuple: location of the image on the screen
+        """
+        super().__init__()
         self.image = pygame.image.load(image_path)
         self.position = position
-
-    def draw(self, surface):
-        pass
-        # Implement the logic to draw the image on the surface
-
-    def edit(self):
-        pass
-        # Implement the logic to edit the image
