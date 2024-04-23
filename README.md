@@ -39,10 +39,8 @@ TBD
 ### Classes
 
 Expected classes:
-1. Text class (as sprite)
-2. Image class (as sprite)
-3. GUI class? (idk) (use pygame gui module)
-4. utility class (constants like window size, max text/images)
+1. Text class (as sprite) holds text in vision board as objects
+2. Image class (as sprite) holds images in vision board as objects
 
 ## ATP
 
