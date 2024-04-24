@@ -103,10 +103,10 @@ class Controller:
                     
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == text_button:
-                        self.place_object()
+                        self.place_object("text")
                         self.creator_gui("text")
                     if event.ui_element == image_button:
-                        self.place_object()
+                        self.place_object("text")
                         self.creator_gui("image")
                     if event.ui_element == bg_button:
                         pass # set up gui for color picker
