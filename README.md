@@ -46,9 +46,10 @@ Expected classes:
 
 | Step                 |Procedure             |Expected Results                   |
 |----------------------|:--------------------:|----------------------------------:|
-|  1                   | Run program  |Start menu appears |
-|  2                   | Click 'Add Text' | 'Add Text' window opens in middle      |
-| 3 | Customize your text | 'Choose Location' prompt shows up |
-| 4 | Click desired text location | Customized text appears in location |
-| 5 | I'll figure it out later | ... | 
+|  1: Menu and Board                  | Run program and click screen  |Start menu appears; after clicking, black screen appears with GUI and "Save" button. |
+|  2: Adding Text                   | Click 'Add Text' | Add Text" GUI appears. After entering text and choosing settings, 'Choose Location' prompt appears; after clicking location, given text is added. |
+| 3: Adding Images | Click 'Add Image' | "Add Image" GUI appears. After finding image and choosing settings, 'Choose Location' prompt appears; after clicking location, given image is added. |
+| 4: Removing Text and Images | RIGHT click on text or image | Text or image is deleted |
+| 5: Saving and Loading Board States | Press "Z" to save board state | "Board saved." appears; after pressing "X", the board will be cleared and the saved board state will appear. |
+| 6: Saving Board as Image | Press "Save Button" in bottom right corner. | File dialog appears; after saving location, the board will be saved as an image and the end menu will appear. | 
 etc...
