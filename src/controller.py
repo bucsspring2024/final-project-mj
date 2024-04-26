@@ -32,7 +32,7 @@ class Controller:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Vision Board Creator')
-        
+    
         self.surface = pygame.display.set_mode((LENGTH, WIDTH))
         
         self.clock = pygame.time.Clock()
@@ -55,6 +55,7 @@ class Controller:
     
     
     def menuloop(self):
+        # TODO: make gui dynamic to window size
         menu = pygame_menu.Menu('Menu', LENGTH, WIDTH)
         menu.add.label('Click to start.', max_char=-1, font_size=32)
 
@@ -70,7 +71,7 @@ class Controller:
         self.board = pygame.Surface(self.surface.get_size())
 
         self.manager = pygame_gui.UIManager((LENGTH, WIDTH))
-        edit_panel = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((0, 0), (400, 200)), manager=self.manager, window_display_title='Edit Panel (DO NOT CLOSE) (Q to toggle)')
+        edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (400, 200)), manager=self.manager, window_display_title='Edit Panel (DO NOT CLOSE) (Q to toggle)')
         panel_visibility = True
         text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((20, 0), (100, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
         image_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (100, 50)), text='Add Image', manager=self.manager, container=edit_panel, anchors={'center':'center'})
@@ -120,15 +121,10 @@ class Controller:
                     pass
                 
             # update board
-            self.manager.update(self.time_delta)       
-            
             self.texts.draw(self.board)
             self.images.draw(self.board)
-            self.surface.blit(self.board, (0, 0))
-            
-            self.manager.draw_ui(self.surface)    
-            
-            pygame.display.update()
+
+            self.update_bundle()
 
 
     def endloop(self):
@@ -173,16 +169,16 @@ class Controller:
     
     def creator_gui(self, type):
         # type is either text or image
-        creator_gui = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 150), (600, 300)), manager=self.manager)
+        creator_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 150), (600, 300)), manager=self.manager)
         if type == "text":
             creator_gui.set_display_title('Add Text')
-            text_input_box = pygame_gui.elements.ui_text_entry_line.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='', manager=self.manager, container=creator_gui, anchors={'center':'center'})
+            text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='', manager=self.manager, container=creator_gui, anchors={'center':'center'})
             text =''
             
-            text_size_slider = pygame_gui.elements.ui_horizontal_slider.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=24, value_range=(12, 120), manager=self.manager, container=creator_gui, anchors={'center':'center'})
+            text_size_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=24, value_range=(12, 120), manager=self.manager, container=creator_gui, anchors={'center':'center'})
             text_size = text_size_slider.get_current_value()
             
-            font_dropdown = pygame_gui.elements.ui_drop_down_menu.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=['Arial', 'Times New Roman', 'Comic Sans MS'], starting_option='Arial')
+            font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=['Arial', 'Times New Roman', 'Comic Sans MS'], starting_option='Arial')
             font = 'Arial'
             
             color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 5 - 100, WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker')
@@ -222,10 +218,7 @@ class Controller:
                     text = text_input_box.get_text()
                     # we might have to use pure pygame to have a text preview; let's find out how to actually implement the text on screen first. use PIL?
 
-            self.manager.update(self.time_delta)
-            self.surface.blit(self.board, (0, 0))
-            self.manager.draw_ui(self.surface)
-            pygame.display.update()
+            self.update_bundle()
         
         
         # this probably will return something
@@ -242,7 +235,7 @@ class Controller:
     
     
     def choose_location(self):
-        location_prompt = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((LENGTH / 2 - 150, WIDTH / 2 - 75), (300, 150)), manager=self.manager, window_display_title='Click to place object')
+        location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((LENGTH / 2 - 150, WIDTH / 2 - 75), (300, 150)), manager=self.manager, window_display_title='Click to place object')
         choosing = True
         while choosing:
             for event in pygame.event.get():
@@ -254,12 +247,18 @@ class Controller:
                 
                 
                 
-            self.manager.update(self.time_delta)
-            self.surface.blit(self.board, (0, 0))
-            self.manager.draw_ui(self.surface)
-            pygame.display.update()
+            self.update_bundle()
         # returns location as tuple
         pass
+
+
+    
+
+    def update_bundle(self):
+        self.manager.update(self.time_delta)
+        self.surface.blit(self.board, (0, 0))
+        self.manager.draw_ui(self.surface)
+        pygame.display.update()
 
 # EXPECTED STATES
     # MENU 
