@@ -19,7 +19,7 @@ from src.image import Image
     # tkinter is standard so no extra credit but might need for save
 
 
-# is this how constants work LOL ???
+# TODO: make gui dynamic to window size
 consts = Utility()
 LENGTH = consts.length
 WIDTH = consts.width
@@ -121,6 +121,7 @@ class Controller:
                     pass
                 
             # update board
+            self.board.fill((255, 255, 255))
             self.texts.draw(self.board)
             self.images.draw(self.board)
 
@@ -188,7 +189,9 @@ class Controller:
             # preview_text = pygame_gui.elements.UITextBox(relative_rect=pygame.Rect((0, 0), text_preview_window.get_container().get_size()), manager=self.manager, container=text_preview_window, html_text='')
         
         elif type == "image":
-            creator_gui.set_display_title('Add Image')
+            creator_gui.set_display_title('Choose Image Type')
+            image_type_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((0, 0), (150, 50)), manager=self.manager, container=creator_gui, anchors={'0':'center'}, options_list=['Local', 'URL'], starting_option='Local')
+            image_type = 'local'
             # image_input =
             
         submit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 75), (100, 50)), text='Submit', manager=self.manager, container=creator_gui, anchors={'center':'center'})
@@ -205,6 +208,8 @@ class Controller:
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == submit_button:
                         # save stuff | might not be necessary since events are updated live anyway
+                        if type == "image":
+                            pass # implement file
                         creating = False
                 if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
                     if event.ui_element == text_size_slider:
@@ -214,6 +219,9 @@ class Controller:
                     if event.ui_element == font_dropdown:
                         font = event.text
                         print(font)
+                    if event.ui_element == image_type_dropdown:
+                        image_type = event.text
+                        print(image_type)
                 if event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and event.ui_element == text_input_box:
                     text = text_input_box.get_text()
                     # we might have to use pure pygame to have a text preview; let's find out how to actually implement the text on screen first. use PIL?
@@ -229,8 +237,7 @@ class Controller:
             text_settings = [text, text_size, font, text_color]
             return text_settings
         elif type == "image":
-            image_settings = []
-            return image_settings
+            return image
     
     
     
