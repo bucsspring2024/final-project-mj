@@ -59,6 +59,7 @@ class Controller:
                     self.state = "BOARD"
             menu.draw(self.surface)
             pygame.display.flip()
+      
         
                   
     def boardloop(self):
@@ -108,8 +109,14 @@ class Controller:
                         # add max checker
                         self.place_element("image")
                     if event.ui_element == bg_button:
-                        pass # set up gui for color picker
-                    
+                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 2 - 200, WIDTH / 2 - 200), (400, 400)), manager=self.manager, window_title='Background Color Picker')
+                        bg_color = pygame.Color(255, 255, 255, 255)
+                
+                elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_element == bg_picker:
+                    bg_color = event.colour
+                    self.board.fill(bg_color)
+                    bg_picker.kill()
+                        
                 # todo: right click to delete text/image collidepoint yk
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     pass
@@ -120,6 +127,7 @@ class Controller:
             self.images.draw(self.board)
 
             self.update_bundle()
+
 
 
     def endloop(self):
@@ -144,10 +152,6 @@ class Controller:
         
         # place the object on the board
         self.place_object(type, settings, location)
-        
-        
-        # adds element to group, returns nothing
-        pass
     
     
     
@@ -158,6 +162,7 @@ class Controller:
             text.create()
             
             self.texts.add(text)
+            
         # if image then create an Image object with settings and location and add to group
         pass
     
@@ -252,20 +257,25 @@ class Controller:
                     location_prompt.kill()
                     return location
                 
-                
-                
             self.update_bundle()
         # returns location as tuple
-        pass
-
-
     
+
 
     def update_bundle(self):
         self.manager.update(self.time_delta)
         self.surface.blit(self.board, (0, 0))
         self.manager.draw_ui(self.surface)
         pygame.display.update()
+
+
+
+
+
+
+
+
+
 
 # EXPECTED STATES
     # MENU 
