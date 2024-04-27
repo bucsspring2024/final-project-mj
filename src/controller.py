@@ -1,13 +1,7 @@
 import pygame
-import pygame_gui.core.drawable_shapes
-import pygame_gui.elements.ui_drop_down_menu
-import pygame_gui.elements.ui_horizontal_slider
-import pygame_gui.elements.ui_panel
-import pygame_gui.elements.ui_text_entry_line
-import pygame_gui.elements.ui_window
-import pygame_gui.windows.ui_colour_picker_dialog
 import pygame_menu
 import pygame_gui
+import os
 from src.utility import Utility
 from src.text import Text
 from src.image import Image
@@ -162,8 +156,8 @@ class Controller:
         if type == 'text':
             text = Text(settings, location)
             text.create()
+            
             self.texts.add(text)
-            print(self.texts)
         # if image then create an Image object with settings and location and add to group
         pass
     
@@ -174,17 +168,18 @@ class Controller:
         creator_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 150), (600, 300)), manager=self.manager)
         if type == "text":
             creator_gui.set_display_title('Add Text')
-            text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='', manager=self.manager, container=creator_gui, anchors={'center':'center'})
-            text =''
+            text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='sample', placeholder_text='Your text here', manager=self.manager, container=creator_gui, anchors={'center':'center'})
+            text = 'sample'
             
-            text_size_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=24, value_range=(8, 32), manager=self.manager, container=creator_gui, anchors={'center':'center'})
+            text_size_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=48, value_range=(24, 72), manager=self.manager, container=creator_gui, anchors={'center':'center'})
             text_size = text_size_slider.get_current_value()
             
-            font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=['Arial', 'Times New Roman', 'Comic Sans MS'], starting_option='Arial')
-            font = 'Arial'
+            fonts = ['Cambria', 'Comic Sans MS', 'Helvetica']
+            font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=fonts, starting_option=fonts[0])
+            font = fonts[0]
             
             color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 5 - 100, WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker')
-            text_color = '#000000'
+            text_color = pygame.Color(0, 0, 0, 255)
             
             # text_preview_window = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((LENGTH / 2 - 100, WIDTH / 2 + 200), (200, 200)), manager=self.manager, window_display_title='Text Preview')
             # preview_text = pygame_gui.elements.UITextBox(relative_rect=pygame.Rect((0, 0), text_preview_window.get_container().get_size()), manager=self.manager, container=text_preview_window, html_text='')
@@ -223,6 +218,9 @@ class Controller:
                     if type == "image":
                         image_type = event.text
                         print(image_type)
+                if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_element == color_picker:
+                    text_color = event.colour
+                    print(text_color)
                 if event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and event.ui_element == text_input_box:
                     text = text_input_box.get_text()
                     # we might have to use pure pygame to have a text preview; let's find out how to actually implement the text on screen first. use PIL?
