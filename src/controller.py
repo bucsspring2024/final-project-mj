@@ -161,6 +161,7 @@ class Controller:
         # if text then create a Text object with settings and location and add to group
         if type == 'text':
             text = Text(settings, location)
+            text.create()
             self.texts.add(text)
             print(self.texts)
         # if image then create an Image object with settings and location and add to group
@@ -176,7 +177,7 @@ class Controller:
             text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='', manager=self.manager, container=creator_gui, anchors={'center':'center'})
             text =''
             
-            text_size_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=24, value_range=(12, 120), manager=self.manager, container=creator_gui, anchors={'center':'center'})
+            text_size_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((-200, 0), (100, 25)), start_value=24, value_range=(8, 32), manager=self.manager, container=creator_gui, anchors={'center':'center'})
             text_size = text_size_slider.get_current_value()
             
             font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=['Arial', 'Times New Roman', 'Comic Sans MS'], starting_option='Arial')
@@ -216,10 +217,10 @@ class Controller:
                         text_size = text_size_slider.get_current_value()
                         print(text_size)
                 if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
-                    if event.ui_element == font_dropdown:
+                    if type == "text":
                         font = event.text
                         print(font)
-                    if event.ui_element == image_type_dropdown:
+                    if type == "image":
                         image_type = event.text
                         print(image_type)
                 if event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and event.ui_element == text_input_box:
@@ -237,7 +238,8 @@ class Controller:
             text_settings = [text, text_size, font, text_color]
             return text_settings
         elif type == "image":
-            return image
+            # return image
+            pass
     
     
     
