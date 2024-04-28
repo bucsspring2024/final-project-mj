@@ -11,7 +11,7 @@ Matt-Joshua Tan
 
 ## Project Description
 
-Create your own vision board in Pygame! Use Google's Gemini or take inspiration from the Internet to add text and images to your ideal vision board.
+Create your own vision board in Pygame! Use your imagination and Stable Diffusion to create a motivational poster for yourself, just like you did when you were young.
 
 ***    
 
