@@ -84,6 +84,7 @@ class Controller:
         
         self.texts = pygame.sprite.Group()
         self.images = pygame.sprite.Group()
+        bg_choosing = False
         
         while self.state == "BOARD":
             for event in pygame.event.get():
@@ -109,20 +110,21 @@ class Controller:
                         # add max checker
                         self.place_element("image")
                     if event.ui_element == bg_button:
-                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 2 - 200, WIDTH / 2 - 200), (400, 400)), manager=self.manager, window_title='Background Color Picker')
-                        bg_color = pygame.Color(255, 255, 255, 255)
-                
-                elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_element == bg_picker:
-                    bg_color = event.colour
-                    self.board.fill(bg_color)
-                    bg_picker.kill()
+                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
+                        text_button.disable()
+                        image_button.disable()
                         
+                elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_object_id == '#bg_picker':
+                    self.board.fill(event.colour)
+                    bg_picker.kill()
+                    text_button.enable()
+                    image_button.enable()
+          
                 # todo: right click to delete text/image collidepoint yk
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     pass
-                
+
             # update board
-            self.board.fill((255, 255, 255))
             self.texts.draw(self.board)
             self.images.draw(self.board)
 
@@ -183,7 +185,7 @@ class Controller:
             font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=fonts, starting_option=fonts[0])
             font = fonts[0]
             
-            color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 5 - 100, WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker')
+            color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 5 - 100, WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
             text_color = pygame.Color(0, 0, 0, 255)
             
             # text_preview_window = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((LENGTH / 2 - 100, WIDTH / 2 + 200), (200, 200)), manager=self.manager, window_display_title='Text Preview')
@@ -191,42 +193,49 @@ class Controller:
         
         elif type == "image":
             creator_gui.set_display_title('Choose Image Type')
-            image_type_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((0, 0), (150, 50)), manager=self.manager, container=creator_gui, anchors={'0':'center'}, options_list=['Local', 'URL'], starting_option='Local')
-            image_type = 'local'
-            # image_input =
+            
+            image_types = ['Local', 'AI']
+            image_type_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((0, -25), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=image_types, starting_option='Local')
+            image_type = image_types[0]
             
         submit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 75), (100, 50)), text='Submit', manager=self.manager, container=creator_gui, anchors={'center':'center'})
         
         
         # use GUI events to get various stuff
-        # this might go outside of the function in order to follow SRP
+        # this stuff might have to go into the mainloop at some point
+        
         creating = True
         while creating:
             for event in pygame.event.get():
                 self.manager.process_events(event)
                 if event.type == pygame_gui.UI_WINDOW_CLOSE and event.ui_element == creator_gui:
                     creating = False
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == submit_button:
                         # save stuff | might not be necessary since events are updated live anyway
-                        if type == "image":
-                            pass # implement file
                         creating = False
-                if event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+                elif event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
                     if event.ui_element == text_size_slider:
                         text_size = text_size_slider.get_current_value()
                         print(text_size)
-                if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+                elif event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
                     if type == "text":
                         font = event.text
                         print(font)
                     if type == "image":
                         image_type = event.text
+                        if image_type == "Local":
+                            # open file dialog
+                            pass
+                        elif image_type == "AI":
+                            # open AI dialog
+                            pass
                         print(image_type)
-                if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_element == color_picker:
+                elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_object_id == '#text_color_picker':
                     text_color = event.colour
+                    color_picker.kill()
                     print(text_color)
-                if event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and event.ui_element == text_input_box:
+                elif event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and event.ui_element == text_input_box:
                     text = text_input_box.get_text()
                     # we might have to use pure pygame to have a text preview; let's find out how to actually implement the text on screen first. use PIL?
 
