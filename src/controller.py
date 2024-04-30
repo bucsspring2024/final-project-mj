@@ -5,24 +5,25 @@ from src.utility import Utility
 from src.text import Text
 from src.image import Image
 
-# TODO: make gui dynamic to window size
-consts = Utility()
-LENGTH = consts.length
-WIDTH = consts.width
-MAX_TEXT = consts.max_text
-MAX_IMAGES = consts.max_images
-FRAMERATE = 60
 
 class Controller:
 
+    
     def __init__(self):
+        # TODO: make gui dynamic to window size
+        consts = Utility()
+        self.LENGTH = consts.length
+        self.WIDTH = consts.width
+        self.FRAMERATE = 60
+        
+        
         pygame.init()
         pygame.display.set_caption('Vision Board Creator')
     
-        self.surface = pygame.display.set_mode((LENGTH, WIDTH))
+        self.surface = pygame.display.set_mode((self.LENGTH, self.WIDTH))
         
         self.clock = pygame.time.Clock()
-        self.time_delta = self.clock.tick(FRAMERATE) / 1000.0
+        self.time_delta = self.clock.tick(self.FRAMERATE) / 1000.0
 
         self.state = 'MENU'
 
@@ -41,7 +42,7 @@ class Controller:
     
     
     def menuloop(self):
-        menu = pygame_menu.Menu('Menu', LENGTH, WIDTH)
+        menu = pygame_menu.Menu('Menu', self.LENGTH, self.WIDTH)
         menu.add.label('Click to start.', max_char=-1, font_size=32)
 
         while self.state == "MENU":
@@ -60,7 +61,7 @@ class Controller:
         self.board.fill(self.bg_color)
         
         # init core gui
-        self.manager = pygame_gui.UIManager((LENGTH, WIDTH))
+        self.manager = pygame_gui.UIManager((self.LENGTH, self.WIDTH))
         edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (400, 200)), manager=self.manager, window_display_title='Edit Panel (DO NOT CLOSE) (Q to toggle)')
         panel_visibility = True
         text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((20, 0), (100, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
@@ -103,13 +104,11 @@ class Controller:
                 
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == text_button:
-                        # add max checker
                         self.place_element("text")
                     if event.ui_element == image_button:
-                        # add max checker
                         self.place_element("image")
                     if event.ui_element == bg_button:
-                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
+                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.LENGTH / 2 - 300, self.WIDTH / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
                         text_button.disable()
                         image_button.disable()
                     if event.ui_element == save_button:
@@ -180,7 +179,7 @@ class Controller:
     def creator_gui(self, type):
         # make this 2 functions later
         # type is either text or image
-        creator_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((LENGTH / 2 - 300, WIDTH / 2 - 150), (600, 300)), manager=self.manager)
+        creator_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH / 2 - 300, self.WIDTH / 2 - 150), (600, 300)), manager=self.manager)
         if type == "text":
             creator_gui.set_display_title('Add Text')
             text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='sample', placeholder_text='Your text here', manager=self.manager, container=creator_gui, anchors={'center':'center'})
@@ -193,10 +192,10 @@ class Controller:
             font_dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((200, -50), (150, 50)), manager=self.manager, container=creator_gui, anchors={'center':'center'}, options_list=fonts, starting_option=fonts[0])
             font = fonts[0]
             
-            color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((LENGTH / 5 - 100, WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
+            color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.LENGTH / 5 - 100, self.WIDTH / 2), (200, 200)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
             text_color = pygame.Color(0, 0, 0, 255)
             
-            # text_preview_window = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((LENGTH / 2 - 100, WIDTH / 2 + 200), (200, 200)), manager=self.manager, window_display_title='Text Preview')
+            # text_preview_window = pygame_gui.elements.ui_window.UIWindow(rect=pygame.Rect((self.LENGTH / 2 - 100, self.WIDTH / 2 + 200), (200, 200)), manager=self.manager, window_display_title='Text Preview')
             # preview_text = pygame_gui.elements.UITextBox(relative_rect=pygame.Rect((0, 0), text_preview_window.get_container().get_size()), manager=self.manager, container=text_preview_window, html_text='')
         
         elif type == "image":
@@ -270,7 +269,7 @@ class Controller:
     
     
     def choose_location(self, type):
-        location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((LENGTH / 2 - 250, WIDTH / 2 - 75), (500, 150)), manager=self.manager, window_display_title='Click to place object')
+        location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH / 2 - 250, self.WIDTH / 2 - 75), (500, 150)), manager=self.manager, window_display_title='Click to place object')
         choosing = True
         while choosing:
             for event in pygame.event.get():
