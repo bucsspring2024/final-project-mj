@@ -45,7 +45,7 @@ class Text(pygame.sprite.Sprite):
         
         self.text_object = pygame.image.fromstring(self.image.tobytes(), self.image.size, self.image.mode).convert_alpha()
         self.rect = self.text_object.get_rect()
-        self.rect.center = self.position
+        self.rect.topleft = self.position
         
         self.image = self.text_object
 

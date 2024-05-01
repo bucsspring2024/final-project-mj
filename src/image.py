@@ -29,7 +29,7 @@ class Image(pygame.sprite.Sprite):
         self.resize()
         
         self.rect = self.image.get_rect()
-        self.rect.center = self.position
+        self.rect.topleft = self.position
     
     
     
