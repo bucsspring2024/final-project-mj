@@ -76,9 +76,9 @@ class Controller:
         save_button = pygame_gui.elements.UIButton(relative_rect=big_button, text='Save as Image', manager=self.manager, anchors={'bottom':'bottom', 'right':'right'})
         
         tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH - 300, 0), (300, 300)), manager=self.manager, window_display_title='Tips')
-        tips = ['Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load']
+        tips = ['Click to select and drag', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load', 'Change BG after using', 'text color picker, sorry']
         for i, tip in enumerate(tips):
-            tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (200, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
+            tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (250, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
         
         # init sprite groups
         self.texts = pygame.sprite.Group()
@@ -86,6 +86,7 @@ class Controller:
         
         self.selected_texts = []
         self.selected_images = []
+        
         # mainloop
         while self.state == "BOARD":
             for event in pygame.event.get():
@@ -138,9 +139,9 @@ class Controller:
                     if event.ui_element == image_button:
                         self.place_element("image")
                     if event.ui_element == bg_button:
-                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.WIDTH / 2 - 300, self.HEIGHT / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
                         text_button.disable()
                         image_button.disable()
+                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.WIDTH / 2 - 300, self.HEIGHT / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
                     if event.ui_element == save_button:
                         pygame.image.save(self.board, 'etc/board.png')
                     edit_panel.enable()
@@ -326,5 +327,6 @@ class Controller:
         self.saved_images = self.images.copy()
     
     def load_board(self):
-        self.texts = self.saved_texts
-        self.images = self.saved_images
+        if hasattr(self, 'saved_texts') and hasattr(self, 'saved_images'):
+            self.texts = self.saved_texts
+            self.images = self.saved_images
