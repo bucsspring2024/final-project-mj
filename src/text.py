@@ -27,7 +27,7 @@ class Text(pygame.sprite.Sprite):
         self.color = (settings[3].r, settings[3].g, settings[3].b, settings[3].a)
 
         # file = "assets/testimage.png"
-        self.image = Image.new("RGBA", (consts.length, consts.width), (255, 255, 255, 0))
+        self.image = Image.new("RGBA", (consts.width, consts.height), (255, 255, 255, 0))
         
         self.position = position
         
@@ -50,3 +50,8 @@ class Text(pygame.sprite.Sprite):
         self.image = self.text_object
 
 # TODO: Creation of text using PIL / pygame; save this text as an image then load it into the object
+
+    def move(self, x, y):
+        self.rect.x += x
+        self.rect.y += y
+        

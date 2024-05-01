@@ -13,15 +13,15 @@ class Controller:
     def __init__(self):
         # TODO: make gui dynamic to window size
         consts = Utility()
-        self.LENGTH = consts.length
         self.WIDTH = consts.width
+        self.HEIGHT = consts.height
         self.FRAMERATE = 60
         
         
         pygame.init()
         pygame.display.set_caption('Vision Board Creator')
     
-        self.surface = pygame.display.set_mode((self.LENGTH, self.WIDTH))
+        self.surface = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         
         self.clock = pygame.time.Clock()
         self.time_delta = self.clock.tick(self.FRAMERATE) / 1000.0
@@ -43,7 +43,7 @@ class Controller:
     
     
     def menuloop(self):
-        menu = pygame_menu.Menu('Menu', self.LENGTH, self.WIDTH)
+        menu = pygame_menu.Menu('Menu', self.WIDTH, self.HEIGHT)
         menu.add.label('Click to start.', max_char=-1, font_size=32)
 
         while self.state == "MENU":
@@ -63,7 +63,7 @@ class Controller:
         self.board.fill(self.bg_color)
         
         # init core gui
-        self.manager = pygame_gui.UIManager((self.LENGTH, self.WIDTH), theme_path='etc/style.json')
+        self.manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT), theme_path='etc/style.json')
         
         edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (600, 200)), manager=self.manager, window_display_title='Edit Panel')
         panel_visibility = True
@@ -75,7 +75,7 @@ class Controller:
         big_button.bottomright = (-30, -20)
         save_button = pygame_gui.elements.UIButton(relative_rect=big_button, text='Save as Image', manager=self.manager, anchors={'bottom':'bottom', 'right':'right'})
         
-        tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH - 300, 0), (300, 300)), manager=self.manager, window_display_title='Tips')
+        tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH - 300, 0), (300, 300)), manager=self.manager, window_display_title='Tips')
         tips = ['Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load']
         for i, tip in enumerate(tips):
             tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (200, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
@@ -84,6 +84,8 @@ class Controller:
         self.texts = pygame.sprite.Group()
         self.images = pygame.sprite.Group()
         
+        self.selected_texts = []
+        self.selected_images = []
         # mainloop
         while self.state == "BOARD":
             for event in pygame.event.get():
@@ -102,13 +104,31 @@ class Controller:
                         self.load_board()
                 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 3: # right click
+                    if event.button == 1: # left click
+                        for text in self.texts:
+                            if text.rect.collidepoint(pygame.mouse.get_pos()):
+                                self.selected_texts.append(text)
+                        for image in self.images:
+                            if image.rect.collidepoint(pygame.mouse.get_pos()):
+                                self.selected_images.append(image)
+                    elif event.button == 3: # right click
                         for image in self.images:
                             if image.rect.collidepoint(pygame.mouse.get_pos()):
                                 image.kill()
                         for text in self.texts:
                             if text.rect.collidepoint(pygame.mouse.get_pos()):
                                 text.kill()
+                
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.selected_texts = []
+                    self.selected_images = []
+                    
+                elif event.type == pygame.MOUSEMOTION:
+                    for text in self.selected_texts:
+                        text.move(event.rel[0], event.rel[1])
+                    for image in self.selected_images:
+                        image.move(event.rel[0], event.rel[1])
+                
                 
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     edit_panel.disable()
@@ -118,7 +138,7 @@ class Controller:
                     if event.ui_element == image_button:
                         self.place_element("image")
                     if event.ui_element == bg_button:
-                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.LENGTH / 2 - 300, self.WIDTH / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
+                        bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.WIDTH / 2 - 300, self.HEIGHT / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
                         text_button.disable()
                         image_button.disable()
                     if event.ui_element == save_button:
@@ -183,14 +203,14 @@ class Controller:
         elif type == 'image':
             image = Image(settings, location)
             image.create()
-            image = pygame.transform.scale(image.image, (self.LENGTH / 6, self.WIDTH / 6))
+            image.scale()
             self.images.add(image)
     
     
     
     def creator_gui(self, type):
         # type is either text or image
-        text_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH / 2, self.WIDTH / 2 - 150), (600, 300)), manager=self.manager)
+        text_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2, self.HEIGHT / 2 - 150), (600, 300)), manager=self.manager)
         
         text_gui.set_display_title('Add Text')
         text_input_box = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 50)), initial_text='sample', placeholder_text='Your text here', manager=self.manager, container=text_gui, anchors={'center':'center'})
@@ -207,7 +227,7 @@ class Controller:
         font = fonts[0]
         font_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((200, -50), (250, 25)), text='Choose your font', manager=self.manager, container=text_gui, anchors={'center':'center'})
         
-        color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect(((self.LENGTH / 8), (self.WIDTH / 2) - 200), (600, 400)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
+        color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect(((self.WIDTH / 8), (self.HEIGHT / 2) - 200), (600, 400)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
         text_color = pygame.Color(0, 0, 0, 255)
         color_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, 100), (500, 25)), text='Choose your text color (change BG back after)', manager=self.manager, container=color_picker, anchors={'center':'center'})
         color_label_2 = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, 125), (500, 25)), text='Click OK to lock in the color', manager=self.manager, container=color_picker, anchors={'center':'center'})
@@ -216,7 +236,7 @@ class Controller:
         
         
         
-        image_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH / 2 - 300, self.WIDTH / 2 - 150), (600, 300)), manager=self.manager)
+        image_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2 - 300, self.HEIGHT / 2 - 150), (600, 300)), manager=self.manager)
 
         image_gui.set_display_title('Generate AI Image')
         
@@ -280,7 +300,7 @@ class Controller:
     
     
     def choose_location(self):
-        location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.LENGTH / 2 - 250, self.WIDTH / 2 - 75), (500, 150)), manager=self.manager, window_display_title='Click to place object')
+        location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2 - 250, self.HEIGHT / 2 - 75), (500, 150)), manager=self.manager, window_display_title='Click to place object')
         choosing = True
         while choosing:
             for event in pygame.event.get():

@@ -12,8 +12,8 @@ class StableDiffusion():
     
     
     def get_image(self):
-        self.vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16)
-        self.pipe = StableDiffusionPipeline.from_pretrained(self.model_id, vae=self.vae, torch_dtype=torch.float16, safety_checker=None, requires_safety_checker=False)
+        # self.vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16)
+        self.pipe = StableDiffusionPipeline.from_pretrained(self.model_id, torch_dtype=torch.float16, safety_checker=None, requires_safety_checker=False)
         self.pipe = self.pipe.to(self.device)
         self.pipe.enable_attention_slicing()
         

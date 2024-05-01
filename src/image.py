@@ -1,4 +1,5 @@
 import pygame
+from src.utility import Utility
 from src.stablediffusion import StableDiffusion
 
 class Image(pygame.sprite.Sprite):
@@ -13,6 +14,7 @@ class Image(pygame.sprite.Sprite):
         
             # self.image = pygame.image.load(settings)
             # self.rect = self.image.get_rect()
+        self.consts = Utility()
         self.prompt = prompt
         self.position = position
     
@@ -26,7 +28,18 @@ class Image(pygame.sprite.Sprite):
         self.image = genai.get_image()
         self.image = pygame.image.fromstring(self.image.tobytes(), self.image.size, self.image.mode).convert()
         
-        self.resize()
-        
         self.rect = self.image.get_rect()
         self.rect.topleft = self.position
+        
+    def scale(self):
+        """
+        Scale the image
+        """
+        self.image = pygame.transform.scale(self.image, (self.consts.width / 6, self.consts.width / 6))
+        self.rect.width, self.rect.height = self.image.get_size()
+    
+    def move(self, x, y):
+        self.rect.x += x
+        self.rect.y += y
+        
+        
