@@ -30,11 +30,3 @@ class Image(pygame.sprite.Sprite):
         
         self.rect = self.image.get_rect()
         self.rect.topleft = self.position
-    
-    
-    
-    def resize(self):
-        """
-        Resize the image object
-        """
-        self.image = pygame.transform.scale(self.image, (400, 400))

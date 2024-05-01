@@ -183,6 +183,7 @@ class Controller:
         elif type == 'image':
             image = Image(settings, location)
             image.create()
+            image = pygame.transform.scale(image.image, (self.LENGTH / 6, self.WIDTH / 6))
             self.images.add(image)
     
     
