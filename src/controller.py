@@ -11,7 +11,10 @@ class Controller:
 
     
     def __init__(self):
-        # TODO: make gui dynamic to window size
+        """
+        Initialize the controller and the pygame window. 
+        Takes no args and has no return
+        """
         consts = Utility()
         self.WIDTH = consts.width
         self.HEIGHT = consts.height
@@ -31,7 +34,9 @@ class Controller:
 
         
     def mainloop(self):
-        
+        """
+        The mainloop function to switch between states
+        """
         while True:
             if self.state == 'MENU':
                 self.menuloop()
@@ -43,6 +48,9 @@ class Controller:
     
     
     def menuloop(self):
+        """
+        The menuloop that displays the menu screen
+        """
         menu = pygame_menu.Menu('Menu', self.WIDTH, self.HEIGHT)
         menu.add.label('Click to start.', max_char=-1, font_size=32)
 
@@ -57,6 +65,11 @@ class Controller:
         
                   
     def boardloop(self):
+        """
+        The boardloop that displays the board screen. Most of the time using this program is spent here
+        """
+        # unfortunately pygame_gui doesn't let me take the dimensions of given gui elements, so I have to use magic numbers
+        
         # init board
         self.board = pygame.Surface(self.surface.get_size())
         self.bg_color = pygame.Color(0, 0, 0, 0)
@@ -83,12 +96,15 @@ class Controller:
         # init sprite groups
         self.texts = pygame.sprite.Group()
         self.images = pygame.sprite.Group()
+        self.items = [self.texts, self.images]
         
         self.selected_texts = []
         self.selected_images = []
         self.selected = [self.selected_texts, self.selected_images]
         
-        # mainloop
+        selecting_color = False
+        
+        # Board loop
         while self.state == "BOARD":
             for event in pygame.event.get():
                 self.manager.process_events(event)
@@ -120,20 +136,16 @@ class Controller:
                                 obj.scale(new_width, new_height)
                 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1: # left click
-                        for text in self.texts:
-                            if text.rect.collidepoint(pygame.mouse.get_pos()):
-                                self.selected_texts.append(text)
-                        for image in self.images:
-                            if image.rect.collidepoint(pygame.mouse.get_pos()):
-                                self.selected_images.append(image)
+                    if event.button == 1 and not selecting_color: # left click
+                        for item in self.items:
+                            for obj in item:
+                                if obj.rect.collidepoint(pygame.mouse.get_pos()):
+                                    self.selected_texts.append(obj) if item == self.texts else self.selected_images.append(obj)
                     elif event.button == 3: # right click
-                        for image in self.images:
-                            if image.rect.collidepoint(pygame.mouse.get_pos()):
-                                image.kill()
-                        for text in self.texts:
-                            if text.rect.collidepoint(pygame.mouse.get_pos()):
-                                text.kill()
+                        for item in self.items:
+                            for obj in item:
+                                if obj.rect.collidepoint(pygame.mouse.get_pos()):
+                                    obj.kill()
                 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.selected_texts = []
@@ -157,8 +169,13 @@ class Controller:
                         text_button.disable()
                         image_button.disable()
                         bg_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect((self.WIDTH / 2 - 300, self.HEIGHT / 2 - 300), (600, 600)), manager=self.manager, window_title='Background Color Picker', object_id='#bg_picker')
+                        selecting_color = True
                     if event.ui_element == save_button:
                         pygame.image.save(self.board, 'etc/board.png')
+                        edit_panel.kill()
+                        tips_panel.kill()
+                        save_button.kill()
+                        self.state == "END"
                     edit_panel.enable()
                     save_button.enable()
                     
@@ -166,6 +183,7 @@ class Controller:
                 elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_object_id == '#bg_picker':
                     self.bg_color = copy.deepcopy(event.colour) # deepcopy here to fix bg bug OMG!
                     bg_picker.kill()
+                    selecting_color = False
                     text_button.enable()
                     image_button.enable()
 
@@ -180,12 +198,14 @@ class Controller:
             self.board.fill(self.bg_color)
             self.images.draw(self.board)
             self.texts.draw(self.board)
-
             self.update_bundle()
 
 
 
     def endloop(self):
+        """
+        The end state where we can either go back into board state or quit the program
+        """
         while self.state == "END":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -196,9 +216,13 @@ class Controller:
 
 
     def place_element(self, type):
+        """
+        Place an element on the board
+        Args:
+            type (_type_): _description_
+        """
         # pull up creator gui
         settings = self.creator_gui(type)
-        print(settings)
         if settings is not None:
             # choose location
             location = self.choose_location()
@@ -209,6 +233,13 @@ class Controller:
         
     
     def create_object(self, type, settings, location):
+        """
+        Create an image and add it to a Sprite group so it can be drawn on the board
+        Args:
+            type (str): Either text or image
+            settings list | str: If object is text, returns a list of text settings, if object is image, returns a string of the prompt
+            location tuple: (x, y) of the object on the board
+        """
         # if text then create a Text object with settings and location and add to group
         if type == 'text':
             text = Text(settings, location)
@@ -225,6 +256,15 @@ class Controller:
     
     
     def creator_gui(self, type):
+        """
+        The core creator GUI that allows the user to create text or image objects
+        Args:
+            type (str): Image or text
+
+        Returns:
+            list: If the object is text, returns text settings
+            str: If the object is image, returns the prompt
+        """
         # type is either text or image
         text_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2, self.HEIGHT / 2 - 150), (600, 300)), manager=self.manager)
         
@@ -315,13 +355,18 @@ class Controller:
     
     
     def choose_location(self):
+        '''
+        Get the location for the new object on the board
+        
+        Returns:
+            tuple: (x, y) location of the object on the board
+        '''
         location_prompt = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2 - 250, self.HEIGHT / 2 - 75), (500, 150)), manager=self.manager, window_display_title='Click to place object')
         choosing = True
         while choosing:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and self.board.get_rect().collidepoint(pygame.mouse.get_pos()):
                     location = pygame.mouse.get_pos()
-                    print(location)
                     location_prompt.kill()
                     return location
                 
@@ -330,17 +375,27 @@ class Controller:
 
 
     def update_bundle(self):
+        '''
+        An organization function to update the board and GUI elements
+        '''
         self.manager.update(self.time_delta)
         self.surface.blit(self.board, (0, 0))
         self.manager.draw_ui(self.surface)
         pygame.display.update()
 
     
+    
     # for reasons I don't understand, this fixes a bg color bug I've had the entire time.
     def save_board(self):
+        '''
+        Save the board state
+        '''
         self.saved_settings = [copy.deepcopy(self.texts), copy.deepcopy(self.images), copy.copy(self.bg_color)] # deepcopy to save as new object this is esoteric technology
     
     def load_board(self):
+        '''
+        Load the board state
+        '''
         if hasattr(self, 'saved_settings'):
             self.texts = copy.deepcopy(self.saved_settings[0])
             self.images = copy.deepcopy(self.saved_settings[1])

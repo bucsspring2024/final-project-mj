@@ -1,23 +1,32 @@
-from diffusers import StableDiffusionPipeline, AutoencoderKL
+from diffusers import StableDiffusionPipeline
 import torch
-import numpy as np
 import platform
 
 class StableDiffusion():
     def __init__(self, prompt):
+        '''
+        Initializes the object and Stable Diffusion model, does a little prompt engineering
+        '''
         self.prompt = prompt + " 4k, award-winning"
         self.negative_prompt = "blurry, grainy, text, lowres, low quality, ugly, morbid, mutilated, poorly drawn hands, poorly drawn face, watermark, username, signature"
         self.model_id = "runwayml/stable-diffusion-v1-5"
-        self.device = "mps" if platform.system() == "Darwin" else "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "mps" if platform.system() == "Darwin" else "cuda" if torch.cuda.is_available() else "cpu" # "Darwin" is Mac OS
     
     
     def get_image(self):
-        # self.vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16)
+        '''
+        Calls the Stable Diffusion model to generate an image based on the prompt
+        
+        Returns:
+            gen_image PIL.Image: the generated image
+        '''
+
+        # Load the pipeline
         self.pipe = StableDiffusionPipeline.from_pretrained(self.model_id, torch_dtype=torch.float16, safety_checker=None, requires_safety_checker=False)
         self.pipe = self.pipe.to(self.device)
-        self.pipe.enable_attention_slicing()
+        self.pipe.enable_attention_slicing() # Performance optimization for low VRAM
         
-        # Macs are slower, so reducing inference steps / dimensions to speed up the process at cost of quality
+        # Macs are slower, so reducing inference steps / dimensions to speed up the process at the cost of quality. These images look meh
         if platform.system() == "Darwin":
             self.gen_image = self.pipe(self.prompt, negative_prompt=self.negative_prompt, height=256, width=256, num_inference_steps=25).images[0]
         else:

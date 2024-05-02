@@ -31,6 +31,10 @@ class Image(pygame.sprite.Sprite):
     def scale(self, w, h):
         """
         Scale the image
+        
+        Args:
+            w float: width of the image
+            h float: height of the image
         """
         self.pil_image = self.pil_image.resize((round(w), round(h)))
         self.image_object = pygame.image.fromstring(self.pil_image.tobytes(), self.pil_image.size, self.pil_image.mode).convert_alpha()
@@ -38,6 +42,13 @@ class Image(pygame.sprite.Sprite):
         self.rect.width, self.rect.height = self.image.get_size()
     
     def move(self, x, y):
+        '''
+        Move the image to a new location
+        
+        Args:
+            x int: x-coordinate to move the image
+            y int: y-coordinate to move the image
+        '''
         self.rect.x += x
         self.rect.y += y
         

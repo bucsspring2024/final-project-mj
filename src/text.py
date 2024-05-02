@@ -47,6 +47,10 @@ class Text(pygame.sprite.Sprite):
     def scale(self, w, h):
         """
         Scale the text
+        
+        Args:
+            w float: width of the text
+            h float: height of the text
         """
         self.pil_image = self.pil_image.resize((round(w), round(h)))
         self.text_object = pygame.image.fromstring(self.pil_image.tobytes(), self.pil_image.size, self.pil_image.mode).convert_alpha()
@@ -54,6 +58,13 @@ class Text(pygame.sprite.Sprite):
         self.rect.width, self.rect.height = self.image.get_size()
 
     def move(self, x, y):
+        """
+        Move the text to a new location
+        
+        Args:
+            x int: x-axis movement
+            y int: y-axis movement
+        """
         self.rect.x += x
         self.rect.y += y
         
