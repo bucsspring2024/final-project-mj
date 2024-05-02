@@ -1,7 +1,7 @@
 import pygame
 import pygame_menu
 import pygame_gui
-import json
+import copy
 from src.utility import Utility
 from src.text import Text
 from src.image import Image
@@ -98,14 +98,14 @@ class Controller:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         panel_visibility = not panel_visibility
-                        edit_panel.show() if panel_visibility else edit_panel.hide()
-                    if event.key == pygame.K_z:
+                        (edit_panel.show(), tips_panel.show()) if panel_visibility else (edit_panel.hide(), tips_panel.hide())
+                    elif event.key == pygame.K_z:
                         self.save_board()
-                    if event.key == pygame.K_c:
+                    elif event.key == pygame.K_c:
                         self.load_board()
                 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1: # left click
+                    if event.button == 1 : # left click
                         for text in self.texts:
                             if text.rect.collidepoint(pygame.mouse.get_pos()):
                                 self.selected_texts.append(text)
@@ -149,17 +149,17 @@ class Controller:
                     
                     
                 elif event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED and event.ui_object_id == '#bg_picker':
-                    self.bg_color = event.colour
+                    self.bg_color = copy.deepcopy(event.colour) # deepcopy here to fix bg bug OMG!
                     bg_picker.kill()
                     text_button.enable()
                     image_button.enable()
 
                 # it seems pygame_gui has no method to make a window not closable
                 elif event.type == pygame_gui.UI_WINDOW_CLOSE and event.ui_element == edit_panel:
-                    edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (400, 200)), manager=self.manager, window_display_title='Edit Panel')
-                    text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((20, 0), (100, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
-                    image_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (100, 50)), text='Add Image', manager=self.manager, container=edit_panel, anchors={'center':'center'})
-                    bg_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((-120, 0), (100, 50)), text='Change BG Color', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'right':'right'})
+                    edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (600, 200)), manager=self.manager, window_display_title='Edit Panel')
+                    text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((37.5, 0), (150, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
+                    image_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (150, 50)), text='Add Image', manager=self.manager, container=edit_panel, anchors={'center':'center'})
+                    bg_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((-187.5, 0), (150, 50)), text='Change BG', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'right':'right'})
 
             # update board
             self.board.fill(self.bg_color)
@@ -322,11 +322,12 @@ class Controller:
         pygame.display.update()
 
     
+    # for reasons I don't understand, this fixes a bg color bug I've had the entire time.
     def save_board(self):
-        self.saved_texts = self.texts.copy()
-        self.saved_images = self.images.copy()
+        self.saved_settings = [copy.deepcopy(self.texts), copy.deepcopy(self.images), copy.copy(self.bg_color)] # deepcopy to save as new object this is esoteric technology
     
     def load_board(self):
-        if hasattr(self, 'saved_texts') and hasattr(self, 'saved_images'):
-            self.texts = self.saved_texts
-            self.images = self.saved_images
+        if hasattr(self, 'saved_settings'):
+            self.texts = copy.deepcopy(self.saved_settings[0])
+            self.images = copy.deepcopy(self.saved_settings[1])
+            self.bg_color = copy.copy(self.saved_settings[2])
