@@ -12,7 +12,7 @@ class Controller:
     
     def __init__(self):
         """
-        Initialize the controller and the pygame window. 
+        Initialize the controller and the pygame window as well as core variables
         Takes no args and has no return
         """
         consts = Utility()
@@ -28,6 +28,20 @@ class Controller:
         
         self.clock = pygame.time.Clock()
         self.time_delta = self.clock.tick(self.FRAMERATE) / 1000.0
+
+        # init sprite groups
+        self.texts = pygame.sprite.Group()
+        self.images = pygame.sprite.Group()
+        self.items = [self.texts, self.images]
+        
+        self.selected_texts = []
+        self.selected_images = []
+        self.selected = [self.selected_texts, self.selected_images]
+
+        self.board = pygame.Surface(self.surface.get_size())
+        self.bg_color = pygame.Color(0, 0, 0, 0)
+        self.board.fill(self.bg_color)
+
 
         self.state = 'MENU'
 
@@ -51,8 +65,10 @@ class Controller:
         """
         The menuloop that displays the menu screen
         """
-        menu = pygame_menu.Menu('Menu', self.WIDTH, self.HEIGHT)
-        menu.add.label('Click to start.', max_char=-1, font_size=32)
+        font = pygame_menu.font.FONT_FIRACODE
+        my_theme = pygame_menu.Theme(background_color=(0, 0, 0, 0), title_font=font, title_font_size=32, title_offset=(0, 0), widget_font=font, widget_font_size=24, widget_font_color=(255, 255, 255), widget_offset=(0, 0))
+        menu = pygame_menu.Menu('The Vision Board Maker', theme=my_theme, width=self.WIDTH, height=self.HEIGHT)
+        menu.add.label('Click to start your vision board experience.', max_char=-1, font_size=64)
 
         while self.state == "MENU":
             for event in pygame.event.get():
@@ -69,12 +85,7 @@ class Controller:
         The boardloop that displays the board screen. Most of the time using this program is spent here
         """
         # unfortunately pygame_gui doesn't let me take the dimensions of given gui elements, so I have to use magic numbers
-        
-        # init board
-        self.board = pygame.Surface(self.surface.get_size())
-        self.bg_color = pygame.Color(0, 0, 0, 0)
-        self.board.fill(self.bg_color)
-        
+                        
         # init core gui
         self.manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT), theme_path='etc/style.json')
         
@@ -92,16 +103,7 @@ class Controller:
         tips = ['Click to select and drag', 'Click and UP/DOWN to scale', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load']
         for i, tip in enumerate(tips):
             tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (250, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
-        
-        # init sprite groups
-        self.texts = pygame.sprite.Group()
-        self.images = pygame.sprite.Group()
-        self.items = [self.texts, self.images]
-        
-        self.selected_texts = []
-        self.selected_images = []
-        self.selected = [self.selected_texts, self.selected_images]
-        
+                
         selecting_color = False
         
         # Board loop
@@ -110,7 +112,8 @@ class Controller:
                 self.manager.process_events(event)
                 
                 if event.type == pygame.QUIT:
-                    self.state = "END"
+                    pygame.quit()
+                    exit()
                     
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
@@ -175,7 +178,8 @@ class Controller:
                         edit_panel.kill()
                         tips_panel.kill()
                         save_button.kill()
-                        self.state == "END"
+                        self.state = "END"
+                        
                     edit_panel.enable()
                     save_button.enable()
                     
@@ -206,12 +210,35 @@ class Controller:
         """
         The end state where we can either go back into board state or quit the program
         """
+        end_gui = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH / 2 - self.WIDTH / 8, self.HEIGHT / 2 - self.HEIGHT / 12), (self.WIDTH / 4, self.HEIGHT / 6)), manager=self.manager, window_display_title='Thanks for making a board!')
+        end_program_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((-75, 0), (150, 50)), text='End Program', manager=self.manager, container=end_gui, anchors={'center':'center'})
+        back_to_board_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((75, 0), (150, 50)), text='Back to Board', manager=self.manager, container=end_gui, anchors={'center':'center'})
+        
+        
         while self.state == "END":
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                self.manager.process_events(event)
+                
+                if event.type == pygame.QUIT or (event.type == pygame_gui.UI_WINDOW_CLOSE and event.ui_element == end_gui):
                     pygame.quit()
                     exit()
-            pygame.display.flip()
+                    
+                elif event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == end_program_button:
+                        pygame.quit()
+                        exit()
+                    if event.ui_element == back_to_board_button:
+                        self.state = "BOARD"
+                    
+                        
+            self.update_bundle()
+
+
+
+
+
+
+
 
 
 
