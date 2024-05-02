@@ -65,18 +65,18 @@ class Controller:
         # init core gui
         self.manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT), theme_path='etc/style.json')
         
-        edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (600, 200)), manager=self.manager, window_display_title='Edit Panel')
+        edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (self.WIDTH / 3, self.HEIGHT / 5)), manager=self.manager, window_display_title='Edit Panel', draggable=False, resizable=False)
         panel_visibility = True
         text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((37.5, 0), (150, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
         image_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (150, 50)), text='Add Image', manager=self.manager, container=edit_panel, anchors={'center':'center'})
         bg_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((-187.5, 0), (150, 50)), text='Change BG', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'right':'right'})
         
-        big_button = pygame.Rect(0, 0, 200, 100)
+        big_button = pygame.Rect(0, 0, round(self.WIDTH / 9), round(self.HEIGHT / 10))
         big_button.bottomright = (-30, -20)
         save_button = pygame_gui.elements.UIButton(relative_rect=big_button, text='Save as Image', manager=self.manager, anchors={'bottom':'bottom', 'right':'right'})
         
-        tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH - 300, 0), (300, 300)), manager=self.manager, window_display_title='Tips')
-        tips = ['Click to select and drag', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load', 'Change BG after using', 'text color picker, sorry']
+        tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH - (self.WIDTH / 6), 0), (self.WIDTH / 6, self.HEIGHT / 4)), manager=self.manager, window_display_title='Tips', draggable=False, resizable=False)
+        tips = ['Click to select and drag', 'Click and UP/DOWN to scale', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load']
         for i, tip in enumerate(tips):
             tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (250, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
         
@@ -86,6 +86,7 @@ class Controller:
         
         self.selected_texts = []
         self.selected_images = []
+        self.selected = [self.selected_texts, self.selected_images]
         
         # mainloop
         while self.state == "BOARD":
@@ -103,9 +104,23 @@ class Controller:
                         self.save_board()
                     elif event.key == pygame.K_c:
                         self.load_board()
+                    elif event.key == pygame.K_UP:
+                        for item in self.selected:
+                            for obj in item:
+                                ratio = obj.rect.width / obj.rect.height
+                                new_width = obj.rect.width + 5
+                                new_height = new_width / ratio
+                                obj.scale(new_width, new_height)
+                    elif event.key == pygame.K_DOWN:
+                        for item in self.selected:
+                            for obj in item:
+                                ratio = obj.rect.width / obj.rect.height
+                                new_width = obj.rect.width - 5
+                                new_height = new_width / ratio
+                                obj.scale(new_width, new_height)
                 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1 : # left click
+                    if event.button == 1: # left click
                         for text in self.texts:
                             if text.rect.collidepoint(pygame.mouse.get_pos()):
                                 self.selected_texts.append(text)
@@ -123,12 +138,12 @@ class Controller:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.selected_texts = []
                     self.selected_images = []
+                    self.selected = [self.selected_texts, self.selected_images]
                     
                 elif event.type == pygame.MOUSEMOTION:
-                    for text in self.selected_texts:
-                        text.move(event.rel[0], event.rel[1])
-                    for image in self.selected_images:
-                        image.move(event.rel[0], event.rel[1])
+                    for item in self.selected:
+                        for obj in item:
+                            obj.move(event.rel[0], event.rel[1])
                 
                 
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
@@ -154,9 +169,9 @@ class Controller:
                     text_button.enable()
                     image_button.enable()
 
-                # it seems pygame_gui has no method to make a window not closable
+                # it seems pygame_gui has no method to make a window not closable, so if you close it I just have to make it again
                 elif event.type == pygame_gui.UI_WINDOW_CLOSE and event.ui_element == edit_panel:
-                    edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (600, 200)), manager=self.manager, window_display_title='Edit Panel')
+                    edit_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((0, 0), (self.WIDTH / 3, self.HEIGHT / 5)), manager=self.manager, window_display_title='Edit Panel', draggable=False, resizable=False)
                     text_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((37.5, 0), (150, 50)), text='Add Text', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'left':'left'})
                     image_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (150, 50)), text='Add Image', manager=self.manager, container=edit_panel, anchors={'center':'center'})
                     bg_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((-187.5, 0), (150, 50)), text='Change BG', manager=self.manager, container=edit_panel, anchors={'centery':'centery', 'right':'right'})
@@ -204,7 +219,7 @@ class Controller:
         elif type == 'image':
             image = Image(settings, location)
             image.create()
-            image.scale()
+            image.scale(self.WIDTH / 6, self.WIDTH / 6)
             self.images.add(image)
     
     
@@ -230,7 +245,6 @@ class Controller:
         
         color_picker = pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect(((self.WIDTH / 8), (self.HEIGHT / 2) - 200), (600, 400)), manager=self.manager, window_title='Color Picker', object_id='#text_color_picker')
         text_color = pygame.Color(0, 0, 0, 255)
-        color_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, 100), (500, 25)), text='Choose your text color (change BG back after)', manager=self.manager, container=color_picker, anchors={'center':'center'})
         color_label_2 = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, 125), (500, 25)), text='Click OK to lock in the color', manager=self.manager, container=color_picker, anchors={'center':'center'})
         
         text_submit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 75), (100, 50)), text='Submit', manager=self.manager, container=text_gui, anchors={'center':'center'})
