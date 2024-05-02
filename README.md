@@ -11,7 +11,7 @@ Matt-Joshua Tan
 
 ## Project Description
 
-Create your own vision board in Pygame! Use your imagination and Stable Diffusion to create a motivational poster for yourself, just like you did when you were young.
+Create your own vision board in Pygame! Use your imagination and Stable Diffusion to create a sweet little poster.
 
 ***    
 
@@ -30,11 +30,11 @@ TBD
 
 ### Features
 
-1. Add text with customizable color, size, and font
-2. Add images from various sources
+1. Add your own text with customizable color, size, and font
+2. Add locally AI-generated images
 3. Change the background color
-4. Remove text and images if you change your mind
-5. Save your vision board as an image!
+4. Move or remove text and images if you change your mind
+5. Save your vision board as an image to print out and put on your wall!
 
 ### Classes
 
