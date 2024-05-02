@@ -62,4 +62,3 @@ Expected classes:
 | 14: Saving the Board State | Press Z | Your text, images, and background color will be saved. |
 | 15: Loading the Board State | (Preferably after modifying the board again) Press C | Your saved board will be reloaded. |
 | 16: Saving Board as Image | Press "Save as Image" in bottom right corner. | The image will be saved as a png in the "etc" folder of the program. | 
-etc...
