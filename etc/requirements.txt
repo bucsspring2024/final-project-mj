@@ -1,0 +1,7 @@
+diffusers==0.27.2
+Pillow==10.3.0
+pygame==2.5.2
+pygame_ce==2.4.1
+pygame_gui==0.6.9
+pygame_menu==4.4.2
+torch==2.3.0
