@@ -22,6 +22,8 @@ class Controller:
         
         
         pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load('assets/aruarian_dance.mp3')
         pygame.display.set_caption('Vision Board Creator')
     
         self.surface = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
@@ -100,10 +102,14 @@ class Controller:
         save_button = pygame_gui.elements.UIButton(relative_rect=big_button, text='Save as Image', manager=self.manager, anchors={'bottom':'bottom', 'right':'right'})
         
         tips_panel = pygame_gui.elements.UIWindow(rect=pygame.Rect((self.WIDTH - (self.WIDTH / 6), 0), (self.WIDTH / 6, self.HEIGHT / 4)), manager=self.manager, window_display_title='Tips', draggable=False, resizable=False)
-        tips = ['Click to select and drag', 'Click and UP/DOWN to scale', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load']
+        tips = ['Click to select and drag', 'Click and UP/DOWN to scale', 'Right click to delete', 'Q to toggle edit panel', 'Z to save', 'C to load', 'M to mute']
         for i, tip in enumerate(tips):
             tip_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((0, (i - len(tips)/2) * 25), (250, 25)), text=tip, manager=self.manager, container=tips_panel, anchors={'center':'center'})
-                
+        
+        pygame.mixer.music.play(-1, 0.0, 5000)
+        pygame.mixer.music.set_volume(0.1)
+        mute = False
+         
         selecting_color = False
         
         # Board loop
@@ -123,6 +129,9 @@ class Controller:
                         self.save_board()
                     elif event.key == pygame.K_c:
                         self.load_board()
+                    elif event.key == pygame.K_m:
+                        mute = not mute
+                        pygame.mixer.music.set_volume(0) if mute else pygame.mixer.music.set_volume(0.1)
                     elif event.key == pygame.K_UP:
                         for item in self.selected:
                             for obj in item:

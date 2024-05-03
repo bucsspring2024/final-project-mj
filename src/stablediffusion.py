@@ -22,7 +22,7 @@ class StableDiffusion():
         '''
 
         # Load the pipeline
-        self.pipe = StableDiffusionPipeline.from_pretrained(self.model_id, torch_dtype=torch.float16, safety_checker=None, requires_safety_checker=False)
+        self.pipe = StableDiffusionPipeline.from_pretrained(self.model_id, torch_dtype=torch.float16)
         self.pipe = self.pipe.to(self.device)
         self.pipe.enable_attention_slicing() # Performance optimization for low VRAM
         
